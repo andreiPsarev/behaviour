@@ -1,0 +1,80 @@
+#* @vtlvariable name="csrf" type="java.lang.String" *#
+#parse("/views/layouts/compact.vm")
+#set($templatePageName = "Sign Up")
+#@layoutCompact()
+<div class="container">
+    <form class="sign-up-form form" method="post" action="">
+        <input type="hidden" name="_csrf" value="${csrf}">
+        <div class="form__header">
+            <h1 class="form__heading">Sign Up</h1>
+        </div>
+        <div class="form__row form__row--with-columns">
+            <div class="form__column">
+                <label class="form__label" for="sign-up__first-name">First name</label>
+                <input class="form__control" id="sign-up__first-name" type="text" name="first-name" maxlength="255" tabindex="1">
+                <p class="form__feedback"></p>
+            </div>
+            <div class="form__column">
+                <label class="form__label" for="sign-up__last-name">Last name</label>
+                <input class="form__control" id="sign-up__last-name" type="text" name="last-name" maxlength="255" tabindex="2">
+                <p class="form__feedback"></p>
+            </div>
+        </div>
+        <div class="form__row">
+            <label class="form__label" for="sign-up__email">Email</label>
+            <input class="form__control" id="sign-up__email" type="email" name="email" maxlength="255" tabindex="3">
+            <p class="form__feedback"></p>
+        </div>
+        <div class="form__row">
+            <label class="form__label" for="sign-up__password">Password</label>
+            <input class="form__control" id="sign-up__password" type="password" name="password" maxlength="30" tabindex="4">
+            <p class="form__feedback"></p>
+        </div>
+        <div class="form__row">
+            <label class="form__label" for="sign-up__confirm-password">Confirm password</label>
+            <input class="form__control" id="sign-up__confirm-password" type="password" name="confirm-password" maxlength="30" tabindex="5">
+            <p class="form__feedback"></p>
+        </div>
+        <div class="form__footer">
+            <button class="form__button button button--primary">Sign up</button>
+        </div>
+        <div class="separator-message">Already have an account?</div>
+        <a class="button button--secondary button--fluid" href="/sign-in">Sign in</a>
+    </form>
+</div>
+<script src="/js/form-validation.js"></script>
+<script>
+    const signUpForm = document.querySelector(".sign-up-form");
+    const passwordInput = signUpForm["password"];
+    const confirmPasswordInput = signUpForm["confirm-password"];
+
+    let passwordValidator;
+    let confirmPasswordValidator;
+    passwordValidator = e => {
+        if (confirmPasswordInput.value !== "") {
+            validate(confirmPasswordInput, confirmPasswordValidator);
+        }
+        if (e.value === "") {
+            return "Enter a password"
+        } else if (!PASSWORD_REGEX.test(e.value)) {
+            return "Password must be between 8 and 30 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character";
+        }
+        return null;
+    };
+    confirmPasswordValidator = e => {
+        if (e.value === "") {
+            return "Confirm your password";
+        } else if (e.value !== passwordInput.value) {
+            return "Passwords do not match";
+        }
+        return null;
+    };
+
+    applyValidation(signUpForm, "first-name", e => e.value.length === 0 ? "Enter first name" : null);
+    applyValidation(signUpForm, "last-name", e => e.value.length === 0 ? "Enter last name" : null);
+    applyValidation(signUpForm, "email", e => !EMAIL_REGEX.test(e.value) ? "Enter a valid email" : null);
+    applyValidation(signUpForm, "password", passwordValidator);
+    applyValidation(signUpForm, "confirm-password", confirmPasswordValidator);
+    applyFormValidation(signUpForm);
+</script>
+#end

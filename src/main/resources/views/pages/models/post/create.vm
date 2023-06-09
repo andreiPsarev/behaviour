@@ -1,0 +1,25 @@
+#* @vtlvariable name="csrf" type="java.lang.String" *#
+#parse("/views/layouts/full.vm")
+#set($templatePageName = "Create post")
+#@layoutFull()
+<div class="container container--flex">
+    <form class="post-creating-form post-form form" method="post" action="/posts">
+        <input type="hidden" name="_csrf" value="${csrf}">
+        <input type="hidden" name="title">
+        <input type="hidden" name="description">
+        <div class="form__header form__row">
+            <h2 class="post-form__title form__heading form__control editable" contenteditable tabindex="1"></h2>
+            <p class="form__feedback"></p>
+        </div>
+        <div class="form__row">
+            <p class="post-form__description form__control editable" contenteditable tabindex="2"></p>
+            <p class="form__feedback"></p>
+        </div>
+        <div class="post-form__footer form__footer">
+            <a class="post-form__button button button--cancel" href="/">Cancel</a>
+            <button class="post-form__button button button--primary">Post</button>
+        </div>
+    </form>
+</div>
+<script src="/js/editable-post.js"></script>
+#end

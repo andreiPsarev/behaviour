@@ -1,0 +1,16 @@
+#* @vtlvariable name="errorPageTitle" type="java.lang.String" *#
+#* @vtlvariable name="errorCode" type="java.lang.Integer" *#
+#* @vtlvariable name="errorHeading" type="java.lang.String" *#
+#* @vtlvariable name="errorDescription" type="java.lang.String" *#
+#parse("/views/layouts/full.vm")
+#set($templatePageName = $errorPageTitle)
+#@layoutFull()
+<div class="container container--flex">
+    <div class="error">
+        <h1 class="error__code" data-text="${errorCode}">${errorCode}</h1>
+        <p class="error__heading">${errorHeading}</p>
+        <p class="error__description">${errorDescription}</p>
+        <a class="error__button button button--primary" href="/">Return home</a>
+    </div>
+</div>
+#end

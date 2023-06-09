@@ -1,0 +1,28 @@
+#* @vtlvariable name="templatePageName" type="java.lang.String" *#
+#* @vtlvariable name="serverData" type="java.lang.String" *#
+#macro(layoutCompact)
+<!doctype html>
+<html lang="en">
+<head>
+    #parse("/views/fragments/common-meta.vm")
+    <title>${templatePageName} | Universe</title>
+    #parse("/views/fragments/assets.vm")
+</head>
+<body>
+    ${serverData}
+    <div class="form-wrapper">
+        <header class="header header--compact">
+            <div class="container header__container">
+                <a class="logo header__logo" href="/">
+                    <img class="logo__img" src="/images/logo.png" alt="Universe">
+                </a>
+            </div>
+        </header>
+        <main class="main">
+            $bodyContent
+        </main>
+    </div>
+    #parse("/views/fragments/alert.vm")
+</body>
+</html>
+#end

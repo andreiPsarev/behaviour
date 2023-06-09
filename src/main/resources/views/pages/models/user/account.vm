@@ -1,0 +1,105 @@
+#* @vtlvariable name="csrf" type="java.lang.String" *#
+#* @vtlvariable name="user" type="com.fluffy.universe.models.User" *#
+#parse("/views/layouts/full.vm")
+#set($templatePageName = "Account")
+#@layoutFull()
+<div class="container container--flex">
+    <form class="account-form form" method="post" action="" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="${csrf}">
+        <input type="hidden" name="_method" value="PUT">
+        <div class="account-form__header form__header">
+            <h1 class="account-form__heading form__heading">Account</h1>
+            <img class="account-form__avatar" src="/images/user.png" alt="Avatar">
+        </div>
+        <div class="form__row form__row--with-columns">
+            <div class="form__column">
+                <label class="form__label" for="account__first-name">First name</label>
+                <input class="form__control" id="account__first-name" type="text" name="first-name" value="${user.firstName}" maxlength="255" tabindex="1">
+                <p class="form__feedback"></p>
+            </div>
+            <div class="form__column">
+                <label class="form__label" for="account__last-name">Last name</label>
+                <input class="form__control" id="account__last-name" type="text" name="last-name" value="${user.lastName}" maxlength="255" tabindex="2">
+                <p class="form__feedback"></p>
+            </div>
+        </div>
+        <div class="form__row">
+            <label class="form__label" for="account__email">Email</label>
+            <input class="form__control" id="account__email" type="text" name="email" value="${user.email}" maxlength="255" tabindex="3" disabled>
+            <p class="form__feedback"></p>
+        </div>
+        <div class="form__row">
+            <label class="form__label" for="account__gender">Gender</label>
+            <select class="form__control" id="account__gender" name="gender" tabindex="4">
+                <option selected value=""></option>
+                <option value="male" #if($user.gender == "m")selected#end>Male</option>
+                <option value="female" #if($user.gender == "f")selected#end>Female</option>
+            </select>
+            <p class="form__feedback"></p>
+        </div>
+        <div class="form__row">
+            <label class="form__label" for="account__birthday">Birthday</label>
+            <input class="form__control" id="account__birthday" type="date" name="birthday" #if($user.birthday)value="${user.birthday}"#end tabindex="5">
+            <p class="form__feedback"></p>
+        </div>
+        <div class="form__row">
+            <label class="form__label" for="account__address">Address</label>
+            <input class="form__control" id="account__address" type="text" name="address" #if($user.address)value="${user.address}"#end maxlength="255" tabindex="6">
+            <p class="form__feedback"></p>
+        </div>
+        <div class="form__row">
+            <label class="form__label" for="account__website">Website</label>
+            <input class="form__control" id="account__website" type="text" name="website" #if($user.website)value="${user.website}"#end maxlength="255" tabindex="7">
+            <p class="form__feedback"></p>
+        </div>
+        <div class="form__footer">
+            <button class="button button--fluid button--primary">Update information</button>
+        </div>
+    </form>
+</div>
+<script src="/js/form-validation.js"></script>
+<script>
+    function validateDate(inputText) {
+        const dateFormat = /^\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])$/;
+        if (inputText.match(dateFormat)) {
+            const pdate = inputText.split('-');
+            const yy = parseInt(pdate[0]);
+            const mm  = parseInt(pdate[1]);
+            const dd = parseInt(pdate[2]);
+
+            if (mm === 2) {
+                let leapYear = (!(yy % 4) && yy % 100) || !(yy % 400);
+                if ((leapYear && dd > 29) || (!leapYear && dd >= 29)) {
+                    return false;
+                }
+            } else {
+                if (dd > [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][mm - 1]) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    const accountForm = document.querySelector(".account-form");
+    applyValidation(accountForm, "first-name", e => e.value.length === 0 ? "Enter first name" : null);
+    applyValidation(accountForm, "last-name", e => e.value.length === 0 ? "Enter last name" : null);
+    applyValidation(accountForm, "gender", e => ![...e.querySelectorAll("option")].map(o => o.value).includes(e.value) ? "Select a valid gender" : null);
+    applyValidation(accountForm, "birthday", e => {
+        if (e.value === "") {
+            return null;
+        }
+        return validateDate(e.value) ? null : "Enter your date of birth";
+    });
+    applyValidation(accountForm, "address", e => null);
+    applyValidation(accountForm, "website", e => {
+        if (e.value === "") {
+            return null;
+        }
+        return (e.value.startsWith("http://") || e.value.startsWith("https://")) ? null : "URL must start with 'http://' or 'https://'";
+    });
+    applyFormValidation(accountForm);
+</script>
+#end

@@ -1,0 +1,55 @@
+#* @vtlvariable name="paginationBaseURL" type="java.lang.String" *#
+#* @vtlvariable name="paginationRecordCount" type="java.lang.Integer" *#
+#* @vtlvariable name="paginationPageSize" type="java.lang.Integer" *#
+#* @vtlvariable name="paginationCurrentPage" type="java.lang.Integer" *#
+#* @vtlvariable name="paginationSpread" type="java.lang.Integer" *#
+#* @vtlvariable name="paginationPageSizeOptions" type="java.util.List" *#
+#* @vtlvariable name="Math" type="java.lang.Math" *#
+#* @vtlvariable name="VelocityHelper" type="com.fluffy.universe.utils.VelocityHelper" *#
+<div class="pagination">
+    <div class="pagination__section">
+        #set($min = 1)
+        #set($max = $VelocityHelper.calculateMaxPageNumber($paginationRecordCount, $paginationPageSize))
+        #set($paginationPageBefore = $paginationCurrentPage - 1)
+        #set($paginationPageAfter = $paginationCurrentPage + 1)
+
+        <a class="pagination__button pagination__button--left" #if($paginationPageBefore >= $min)href="$VelocityHelper.generatePaginationLink($paginationBaseURL, $paginationPageBefore, $paginationPageSize)"#else tabindex="-1"#end>&lt;</a>
+        #if($paginationCurrentPage == $min)
+            <a class="pagination__button pagination__button--active">$min</a>
+        #else
+            <a class="pagination__button" href="$VelocityHelper.generatePaginationLink($paginationBaseURL, $min, $paginationPageSize)">$min</a>
+        #end
+
+        #set($start = $paginationCurrentPage - $paginationSpread - 1)
+        #set($end = $paginationCurrentPage + $paginationSpread + 1)
+        #set($range = [$start..$end])
+        #foreach($i in $range)
+            #if(($paginationCurrentPage - $paginationSpread - 1 == $i && $paginationCurrentPage - $paginationSpread > $min + 1)
+            || ($paginationCurrentPage + $paginationSpread + 1 == $i && $paginationCurrentPage + $paginationSpread < $max - 1))
+                <a class="pagination__button pagination__button--ellipsis" href="$VelocityHelper.generatePaginationLink($paginationBaseURL, $i, $paginationPageSize)">...</a>
+            #elseif($i > $min && $i < $max)
+                #if($i == $paginationCurrentPage)
+                    <a class="pagination__button pagination__button--active">$i</a>
+                #else
+                    <a class="pagination__button" href="$VelocityHelper.generatePaginationLink($paginationBaseURL, $i, $paginationPageSize)">$i</a>
+                #end
+            #end
+        #end
+
+        #if($max != $min && $paginationRecordCount != 0)
+            #if($paginationCurrentPage == $max)
+                <a class="pagination__button pagination__button--active">$max</a>
+            #else
+                <a class="pagination__button" href="$VelocityHelper.generatePaginationLink($paginationBaseURL, $max, $paginationPageSize)">$max</a>
+            #end
+        #end
+        <a class="pagination__button pagination__button--right" #if($paginationCurrentPage + 1 <= $max)href="$VelocityHelper.generatePaginationLink($paginationBaseURL, $paginationPageAfter, $paginationPageSize)"#else tabindex="-1"#end>&gt;</a>
+    </div>
+
+    <div class="pagination__section">
+        #foreach($paginationPageSizeOption in $paginationPageSizeOptions)
+            <a class="pagination__button#if($paginationPageSizeOption == $paginationPageSize) pagination__button--active#end" href="$VelocityHelper.generatePaginationLink($paginationBaseURL, $null, $paginationPageSizeOption)">$paginationPageSizeOption</a>
+        #end
+        <span class="pagination__label">per page</span>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+#* @vtlvariable name="csrf" type="java.lang.String" *#
+#parse("/views/layouts/compact.vm")
+#set($templatePageName = "Sign In")
+#@layoutCompact()
+<div class="container">
+    <form class="sign-in-form form" method="post" action="">
+        <input type="hidden" name="_csrf" value="${csrf}">
+        <div class="form__header">
+            <h1 class="form__heading">Sign In</h1>
+        </div>
+        <div class="form__row">
+            <label class="form__label" for="sign-in__email">Email</label>
+            <input class="form__control" id="sign-in__email" type="email" name="email" maxlength="255" tabindex="1">
+            <p class="form__feedback"></p>
+        </div>
+        <div class="form__row">
+            <label class="form__label" for="sign-in__password">Password</label>
+            <input class="form__control" id="sign-in__password" type="password" name="password" maxlength="30" tabindex="2">
+            <p class="form__feedback"></p>
+        </div>
+        <div class="form__row">
+            <a class="form__link" href="/forgot-password">Forgot password?</a>
+        </div>
+        <div class="form__footer">
+            <div class="form__row">
+                <button class="form__button button button--primary">Sign in</button>
+            </div>
+        </div>
+        <div class="separator-message">New to Universe?</div>
+        <a class="button button--secondary button--fluid" href="/sign-up">Sign up</a>
+    </form>
+</div>
+<script src="/js/form-validation.js"></script>
+<script>
+    const signInForm = document.querySelector(".sign-in-form");
+    applyValidation(signInForm, "email", e => !EMAIL_REGEX.test(e.value) ? "Enter a valid email" : null);
+    applyValidation(signInForm, "password", e => e.value.length === 0 ? "Enter a password" : null);
+    applyFormValidation(signInForm);
+</script>
+#end

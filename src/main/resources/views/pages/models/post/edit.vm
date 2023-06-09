@@ -1,0 +1,25 @@
+#* @vtlvariable name="csrf" type="java.lang.String" *#
+#* @vtlvariable name="post" type="com.fluffy.universe.models.Post" *#
+#parse("/views/layouts/full.vm")
+#set($templatePageName = "Edit post")
+#@layoutFull()
+<div class="container container--flex">
+    <form class="post-editing-form post-form form" method="post" action="/posts/${post.id}">
+        <input type="hidden" name="_csrf" value="${csrf}">
+        <input type="hidden" name="_method" value="PUT">
+        <input type="hidden" name="title">
+        <input type="hidden" name="description">
+        <div class="form__header form__row">
+            <h2 class="post-form__title form__heading form__control" contenteditable tabindex="1"></h2>
+        </div>
+        <div class="form__row">
+            <p class="post-form__description form__control" contenteditable tabindex="2"></p>
+        </div>
+        <div class="post-form__footer form__footer">
+            <a class="post-form__button button button--cancel" href="/">Cancel</a>
+            <button class="post-form__button button button--primary">Edit</button>
+        </div>
+    </form>
+</div>
+<script src="/js/editable-post.js"></script>
+#end

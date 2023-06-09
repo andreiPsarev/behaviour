@@ -1,0 +1,33 @@
+#* @vtlvariable name="csrf" type="java.lang.String" *#
+#* @vtlvariable name="posts" type="java.util.List" *#
+#* @vtlvariable name="VelocityHelper" type="com.fluffy.universe.utils.VelocityHelper" *#
+#parse("/views/layouts/full.vm")
+#set($templatePageName = "Dashboard")
+#@layoutFull()
+<div class="container">
+    <div class="dashboard">
+        <input type="hidden" name="_csrf" value="${csrf}">
+        <div class="dashboard__header">
+            <h1 class="dashboard__heading">Dashboard</h1>
+        </div>
+        <table class="dashboard__table">
+            <thead class="dashboard__thead">
+                <tr class="dashboard__tr">
+                    <th class="dashboard__th">Title</th>
+                    <th class="dashboard__th">Comments</th>
+                    <th class="dashboard__th">Publication Date</th>
+                </tr>
+            </thead>
+            <tbody class="dashboard__tbody">
+                #foreach($post in $posts)
+                    <tr class="dashboard__tr">
+                        <td class="dashboard__td"><a href="/posts/${post.get("id")}">${post.get("title")}</a></td>
+                        <td class="dashboard__td">${post.get("commentcount")}</td>
+                        <td class="dashboard__td">$VelocityHelper.getDateTime($post.get("publicationdatetime"))</td>
+                    </tr>
+                #end
+            </tbody>
+        </table>
+    </div>
+</div>
+#end

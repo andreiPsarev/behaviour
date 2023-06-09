@@ -1,0 +1,68 @@
+#* @vtlvariable name="csrf" type="java.lang.String" *#
+#* @vtlvariable name="templatePageName" type="java.lang.String" *#
+#* @vtlvariable name="serverData" type="java.lang.String" *#
+#* @vtlvariable name="user" type="com.fluffy.universe.models.User" *#
+#macro(layoutFull)
+<!doctype html>
+<html lang="en">
+<head>
+    #parse("/views/fragments/common-meta.vm")
+    <title>${templatePageName} | Universe</title>
+    #parse("/views/fragments/assets.vm")
+</head>
+<body>
+    ${serverData}
+    <header class="header">
+        <nav class="container header__nav">
+            <a class="logo header__logo" href="/">
+                <img class="logo__img header__img" src="/images/logo.png" alt="Universe">
+            </a>
+            <ul class="header__menu">
+                #if($user)
+                    <li class="header__item">
+                        <a class="header__link header__link--primary button" href="/posts/create">New post</a>
+                    </li>
+                    <li class="header__item">
+                        <div class="dropdown">
+                            <button class="dropdown__button">
+                                <img class="dropdown__icon" src="/images/user.png" alt="Avatar">
+                            </button>
+                            <ul class="dropdown__menu">
+                                <li class="dropdown__item">
+                                    <a class="dropdown__link" href="/account">My profile</a>
+                                </li>
+                                <li class="dropdown__item">
+                                    <a class="dropdown__link" href="/dashboard">Dashboard</a>
+                                </li>
+                                <li class="dropdown__item">
+                                    <form method="post" action="/sign-out">
+                                        <input type="hidden" name="_csrf" value="${csrf}">
+                                        <button class="dropdown__link">Sign out</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                #else
+                    <li class="header__item">
+                        <a class="header__link header__link--secondary button" href="/sign-in">Sign in</a>
+                    </li>
+                    <li class="header__item">
+                        <a class="header__link header__link--primary button" href="/sign-up">Sign up</a>
+                    </li>
+                #end
+            </ul>
+        </nav>
+    </header>
+    <main class="main" role="main">
+        $bodyContent
+    </main>
+    <div class="footer">
+        <div class="container">
+            <p class="footer__copyright">© 2023 Universe. All Rights Reserved.</p>
+        </div>
+    </div>
+    #parse("/views/fragments/alert.vm")
+</body>
+</html>
+#end

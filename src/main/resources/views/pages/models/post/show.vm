@@ -1,0 +1,97 @@
+#* @vtlvariable name="csrf" type="java.lang.String" *#
+#* @vtlvariable name="VelocityHelper" type="com.fluffy.universe.utils.VelocityHelper" *#
+#* @vtlvariable name="user" type="java.util.Map" *#
+#* @vtlvariable name="post" type="java.util.Map" *#
+#* @vtlvariable name="comments" type="java.util.Map" *#
+#* @vtlvariable name="comment" type="java.util.Map" *#
+#parse("/views/layouts/full.vm")
+#set($templatePageName = "Post")
+#@layoutFull()
+<div class="container">
+    <div class="post-wrapper">
+        <article class="post">
+            <div class="post__header">
+                <div class="post__info">
+                    <img class="post__avatar" src="/images/user.png" alt="">
+                    <div class="post__about">
+                        <div class="post__author">${post.get("user.firstname")} ${post.get("user.lastname")}</div>
+                        <div class="post__date">$VelocityHelper.getDateTime($post.get("post.publicationdatetime"))</div>
+                    </div>
+                </div>
+                <h1 class="post__heading">${post.get("post.title")}</h1>
+            </div>
+            <p class="post__description">$VelocityHelper.makeMultiline($post.get("post.description"))</p>
+            <div class="post__footer">
+##                <button class="post__button button">Likes [10]</button>
+##                <button class="post__button button">Comments [2]</button>
+            </div>
+        </article>
+        <div class="comments">
+            #foreach($comment in $comments)
+                <div class="comment" data-id="${comment.get("comment.id")}">
+                    <a class="comment__anchor" name="comment${comment.get("comment.id")}"></a>
+                    <div class="comment__header">
+                        <img class="comment__avatar" src="/images/user.png" alt="Avatar">
+                        <div class="comment__interlocutors">
+                            #if($comment.get("comment.parentid"))
+                                <span class="comment__from">${comment.get("user.firstname")} ${comment.get("user.lastname")}</span> <span class="comment__reply-to">replays to</span> <a class="comment__to" href="#comment${comment.get("comment.parentid")}">${comment.get("parentcommentuser.firstname")} ${comment.get("parentcommentuser.lastname")}</a>
+                            #else
+                                <span class="comment__from">${comment.get("user.firstname")} ${comment.get("user.lastname")}</span>
+                            #end
+                        </div>
+                    </div>
+                    <p class="comment__description">$VelocityHelper.makeMultiline($comment.get("comment.description"))</p>
+                    <div class="comment__footer">
+                        #if($user)
+                            <button class="comment__button button">Reply</button>
+                        #end
+                        <div class="comment__date">$VelocityHelper.getDateTime($comment.get("comment.publicationdatetime"))</div>
+                    </div>
+                </div>
+            #end
+            #if($user)
+                <form class="comment-form comment" method="post" action="/comments">
+                    <input type="hidden" name="_csrf" value="${csrf}">
+                    <input type="hidden" name="parent-id" value="">
+                    <input type="hidden" name="post-id" value="${post.get("post.id")}">
+                    <div class="comment__header">
+                        <img class="comment__avatar" src="/images/user.png" alt="Avatar">
+                        <div class="comment__interlocutors comment__interlocutors--no-reply">
+                            <span class="comment__from">${user.firstName} ${user.lastName}</span> <span class="comment__reply-to">replays to</span> <a class="comment__to" href="#"></a>
+                            <button class="comment-form__reset-button button button--cancel" type="button"><i class="comment-form__xmark fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+                    <div class="comment__description">
+                        <textarea class="comment-form__textarea form__control" name="description"></textarea>
+                    </div>
+                    <div class="comment__footer">
+                        <button class="comment-form__button button button--primary">Send</button>
+                        <button class="comment-form__button button button--cancel" type="button">Cancel</button>
+                    </div>
+                </form>
+            #end
+        </div>
+    </div>
+</div>
+#if($user)
+<script>
+    const form = document.querySelector(".comment-form");
+    const parentIdInput = form["parent-id"];
+    const interlocutorsElement = form.querySelector(".comment__interlocutors");
+    const commentTo = form.querySelector(".comment__to");
+    document.querySelectorAll(".comment__button").forEach(replyButton => replyButton.addEventListener("click", event => {
+        const commentElement = replyButton.parentNode.parentNode;
+        parentIdInput.value = commentElement.getAttribute("data-id");
+        commentTo.innerText = commentElement.querySelector(".comment__from").innerText;
+        commentTo.setAttribute("href", "#comment" + parentIdInput.value);
+        if (interlocutorsElement.classList.contains("comment__interlocutors--no-reply")) {
+            interlocutorsElement.classList.remove("comment__interlocutors--no-reply");
+        }
+    }));
+    form.querySelector(".comment-form__reset-button").addEventListener("click", event => {
+        interlocutorsElement.classList.add("comment__interlocutors--no-reply");
+        parentIdInput.value = "";
+    });
+</script>
+#end
+#end
